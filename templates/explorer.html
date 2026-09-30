@@ -1,0 +1,69 @@
+{# explorer.html - Blockchain Explorer: view each bank's chain, validate all chains, and run the tamper demo. #}
+{% extends "base.html" %}
+{% block title %}Blockchain Explorer{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Blockchain Explorer</h1>
+    <p>Each bank keeps its own copy of the chain. Every block stores the hash of the block before it, so changing any old block breaks the links after it.</p>
+  </div>
+</div>
+
+<section class="card guide" style="margin-bottom: 20px">
+  <h2>What is this page for?</h2>
+  <p>The Bank Portal is where banks <em>do</em> things. This page lets you <em>look inside</em> the shared ledger and prove it can't be secretly changed.</p>
+  <ol>
+    <li><strong>See the ledger.</strong> Each card below is one block. Block #1, #2… each hold the invoices financed when a bank clicked <em>Mine Block</em>. Click a card to see which invoices, which bank, and how much.</li>
+    <li><strong>See that all banks agree.</strong> Switch between the three bank tabs. Each tab is that bank's copy of the <em>same</em> ledger, so all three show every block, whichever bank mined it.</li>
+    <li><strong>See why it is tamper-proof.</strong> Click <em>Tamper Demo</em> to secretly change an amount in an old block, as a dishonest bank employee might. Then click <em>Validate Chain</em>: the edited block turns red, because its contents no longer match its hash.</li>
+    <li><strong>Repair it.</strong> <em>Sync Nodes</em> replaces the broken copy with the valid copy that the other banks hold.</li>
+  </ol>
+</section>
+
+<section class="card" style="margin-bottom: 20px">
+  <div class="card-head">
+    <h2>Network validation</h2>
+    <div class="row">
+      <button class="btn btn-accent" id="validate-btn">Validate Chain</button>
+      <button class="btn btn-danger" id="tamper-btn">Tamper Demo</button>
+      <button class="btn btn-outline" id="sync-btn">Sync Nodes (consensus)</button>
+    </div>
+  </div>
+  <div id="tamper-note"></div>
+  <div class="grid grid-3" id="validation">
+    <p class="muted small" style="grid-column: 1 / -1; margin: 0">Click <strong>Validate Chain</strong> to recompute every hash, check the previous-hash links, the proof-of-work and the Merkle roots on all three banks.</p>
+  </div>
+</section>
+
+<section class="card" style="margin-bottom: 20px">
+  <div class="card-head">
+    <h2 id="chain-title">Chain</h2>
+    <div class="tabs" id="bank-tabs"></div>
+  </div>
+  <div class="alert alert-info">
+    <strong>Why does every bank show the same blocks — even ones mined by other banks?</strong>
+    This is on purpose, and it is the whole point of the project. The tabs are not "each bank's own transactions";
+    they are <em>each bank's own copy of one shared ledger</em>. When any bank mines a block, it is broadcast to all three,
+    so every copy ends up identical.
+    <ul style="margin: 8px 0 0; padding-left: 20px">
+      <li><strong>Fraud check needs it:</strong> No Coincidence Bank can only say "Already financed by Bank of BrokeChain"
+        because Bank of BrokeChain's block is in No Coincidence Bank's copy too. If each bank only kept its own blocks, we'd be back to the
+        original problem: every bank blind to what the others financed.</li>
+      <li><strong>Tamper-proof needs it:</strong> because three identical copies exist, a change to one copy stands out
+        (try <em>Tamper Demo</em>) and can be repaired from the other two (<em>Sync Nodes</em>).</li>
+      <li><strong>Who financed what?</strong> Click a block. The "Bank" column in its records shows which bank financed each invoice.</li>
+    </ul>
+  </div>
+  <div class="chain-track" id="chain"></div>
+  <p class="muted small" style="margin: 4px 0 0">Click a block to see its financing records.</p>
+</section>
+
+<section class="card" id="block-details">
+  <p class="empty" style="margin: 0">No block selected.</p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/explorer.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{# dashboard.html - Home page: explains the problem, shows live stats and the status of the 3 bank nodes. #}
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>An invoice can be financed <em>once.</em></h1>
+    <p class="lede">
+      Small businesses borrow against unpaid invoices. The fraud is taking the same invoice to several
+      banks. Each bank only sees its own books, so nobody notices.
+    </p>
+    <p class="lede">
+      InvoiceChain gives every bank one shared ledger. Before lending, a bank checks it for the invoice.
+      If another bank got there first, the request is stamped duplicate and rejected.
+    </p>
+    <div class="row" style="margin-top: 22px">
+      <button class="btn" id="demo-btn">Load demo data</button>
+      <button class="btn btn-outline" id="reset-btn">Reset everything</button>
+    </div>
+  </div>
+
+  <!-- The same invoice, presented at two banks: the picture of what this project prevents. -->
+  <div class="hero-visual" aria-label="Example: the same invoice presented at two banks">
+    <div class="slip">
+      <div class="slip-head"><strong>Bank of BrokeChain</strong><span class="mono">12 Sep, 10:41</span></div>
+      <dl>
+        <dt>Invoice</dt><dd>INV-2026-0042</dd>
+        <dt>Supplier</dt><dd>Acme Traders</dd>
+        <dt>Amount</dt><dd>₹59,000.00</dd>
+      </dl>
+      <span class="stamp stamp-violet stamp-thump" style="animation-delay: .2s">Financed<small>Block #1</small></span>
+    </div>
+    <div class="slip">
+      <div class="slip-head"><strong>No Coincidence Bank</strong><span class="mono">12 Sep, 15:07</span></div>
+      <dl>
+        <dt>Invoice</dt><dd>INV-2026-0042</dd>
+        <dt>Supplier</dt><dd>Acme Traders</dd>
+        <dt>Amount</dt><dd>₹59,000.00</dd>
+      </dl>
+      <span class="stamp stamp-red stamp-thump" style="animation-delay: .7s">Duplicate<small>Rejected</small></span>
+    </div>
+    <p class="hero-caption">Same invoice, second bank, same afternoon. The shared ledger already has it.</p>
+  </div>
+</section>
+
+<section class="card" style="margin-bottom: 20px">
+  <div class="card-head"><h2>How a loan is checked</h2></div>
+  <ol class="steps">
+    <li>The supplier creates an invoice. Five of its details are hashed into a <strong>fingerprint</strong>.</li>
+    <li>The supplier sends the invoice to a bank for a loan.</li>
+    <li>The bank searches the shared ledger for that fingerprint. Found means <strong>fraud alert</strong>.</li>
+    <li>If it is new, the bank <strong>mines a block</strong>: proof-of-work seals the loan into the ledger.</li>
+    <li>The block goes to the other banks, which check it and add it to their copies.</li>
+  </ol>
+</section>
+
+<section class="grid grid-4" style="margin-bottom: 20px">
+  <div class="card stat"><div class="label">Total invoices</div><div class="value" id="s-invoices">–</div></div>
+  <div class="card stat"><div class="label">Total financed</div><div class="value" id="s-financed">–</div><div class="muted small" id="s-financed-count"></div></div>
+  <div class="card stat fraud"><div class="label">Fraud attempts blocked</div><div class="value" id="s-fraud">–</div></div>
+  <div class="card stat"><div class="label">Chain length</div><div class="value" id="s-length">–</div><div class="muted small">blocks incl. genesis</div></div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2>The three banks</h2>
+    <span id="sync-badge"></span>
+  </div>
+  <div class="grid grid-3" id="nodes"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

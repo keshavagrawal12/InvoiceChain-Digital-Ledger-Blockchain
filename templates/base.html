@@ -1,0 +1,38 @@
+{#
+  base.html - The shared layout for every page: <head>, top navigation bar and toast area.
+  Each page "extends" this file and fills in the title, content and script blocks.
+#}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %} · InvoiceChain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@400;600;700;800&family=Zilla+Slab:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <a class="brand" href="/"><span class="brand-mark">IC</span><span class="brand-text">InvoiceChain</span></a>
+      <div class="nav-links">
+        <a href="/" class="{{ 'active' if active == 'dashboard' }}">Dashboard</a>
+        <a href="/supplier" class="{{ 'active' if active == 'supplier' }}">Supplier Portal</a>
+        <a href="/bank" class="{{ 'active' if active == 'bank' }}">Bank Portal</a>
+        <a href="/explorer" class="{{ 'active' if active == 'explorer' }}">Blockchain Explorer</a>
+        <a href="/verify" class="{{ 'active' if active == 'verify' }}">Verify Invoice</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page">
+    {% block content %}{% endblock %}
+  </main>
+
+  <div id="toasts"></div>
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

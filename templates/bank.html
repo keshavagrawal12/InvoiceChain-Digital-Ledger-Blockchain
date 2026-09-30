@@ -1,0 +1,61 @@
+{# bank.html - Bank Portal: review incoming requests, approve (duplicate check) or reject, and mine blocks. #}
+{% extends "base.html" %}
+{% block title %}Bank Portal{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Bank Portal</h1>
+    <p>Approving a request checks the shared blockchain for the invoice fingerprint. Approved records wait in the pending list until you mine a block.</p>
+  </div>
+  <div style="min-width: 240px">
+    <label for="bank-select">Acting as</label>
+    <select id="bank-select"></select>
+  </div>
+</div>
+
+<section class="card guide" style="margin-bottom: 20px">
+  <h2>How a bank handles a request</h2>
+  <ol>
+    <li><strong>Approve</strong> runs the fraud check: the invoice's fingerprint is searched on the blockchain <em>and</em> in every bank's pending list. If any bank already has it → <strong style="color: var(--red)">FRAUD ALERT</strong>.</li>
+    <li>If it is new, the record goes to <strong>Pending records</strong>. Other banks can already see it, so they can't approve the same invoice.</li>
+    <li><strong>Mine Block</strong> writes the pending records permanently into a new block, which is copied to all three banks. Check it in the <a href="/explorer">Blockchain Explorer</a>.</li>
+  </ol>
+</section>
+
+<div id="result"></div>
+
+<section class="card" style="margin-bottom: 20px">
+  <div class="card-head">
+    <h2>Incoming financing requests</h2>
+    <button class="btn btn-outline btn-sm" id="refresh-btn">Refresh</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Request</th><th>Invoice</th><th>Supplier</th><th class="num">Invoice total</th><th class="num">Advance (80%)</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody id="requests"></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <div>
+      <h2>Pending records</h2>
+      <p class="muted small" style="margin: 0">Approved but not yet on the blockchain.</p>
+    </div>
+    <button class="btn btn-accent" id="mine-btn">Mine Block</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Fingerprint</th><th>Supplier</th><th class="num">Amount financed</th><th>Financing date</th></tr></thead>
+      <tbody id="pending"></tbody>
+    </table>
+  </div>
+  <div id="mine-result"></div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/bank.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.venv/
+data/*.json
+data/nodes/
+.DS_Store
+.claude/

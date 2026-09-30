@@ -1,0 +1,98 @@
+{# supplier.html - Supplier Portal: invoice generator, invoice preview, send-to-bank, and past invoices. #}
+{% extends "base.html" %}
+{% block title %}Supplier Portal{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Supplier Portal</h1>
+    <p>Create an invoice, preview it, and send it to a bank for financing. The invoice's fingerprint is what banks check on the blockchain.</p>
+  </div>
+</div>
+
+<div class="grid grid-2" style="align-items: start">
+  <!-- Invoice form -->
+  <form class="card" id="invoice-form" autocomplete="off">
+    <div class="card-head">
+      <h2>Invoice generator</h2>
+      <button type="button" class="btn btn-outline btn-sm" id="sample-btn">Fill sample data</button>
+    </div>
+
+    <fieldset>
+      <legend>Supplier</legend>
+      <div class="fields-2">
+        <div class="field"><label for="supplier_name">Supplier name</label><input id="supplier_name" required></div>
+        <div class="field"><label for="supplier_gstin">Supplier GST number</label><input id="supplier_gstin" maxlength="30" placeholder="e.g. GST-SUP-001" required></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Buyer</legend>
+      <div class="fields-2">
+        <div class="field"><label for="buyer_name">Buyer name</label><input id="buyer_name" required></div>
+        <div class="field"><label for="buyer_gstin">Buyer GST number</label><input id="buyer_gstin" maxlength="30" placeholder="e.g. GST-BUY-001" required></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Invoice details</legend>
+      <div class="field"><label for="invoice_number">Invoice number (auto-generated, editable)</label><input id="invoice_number" required></div>
+      <div class="fields-2">
+        <div class="field"><label for="invoice_date">Invoice date</label><input type="date" id="invoice_date" required></div>
+        <div class="field"><label for="due_date">Due date</label><input type="date" id="due_date" required></div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Line items</legend>
+      <div class="table-wrap">
+        <table class="items-table">
+          <thead><tr><th>Description</th><th style="width: 80px">Qty</th><th style="width: 110px">Rate (₹)</th><th class="num">Amount</th><th></th></tr></thead>
+          <tbody id="items"></tbody>
+        </table>
+      </div>
+      <button type="button" class="btn btn-link" id="add-item" style="margin: 8px 0 12px">+ Add line item</button>
+      <div class="inv-totals" style="margin-bottom: 12px">
+        <div><span>Subtotal</span><span id="t-subtotal">₹0.00</span></div>
+        <div><span>GST @ 18%</span><span id="t-gst">₹0.00</span></div>
+        <div class="grand"><span>Grand total</span><span id="t-total">₹0.00</span></div>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-accent" id="generate-btn" style="width: 100%">Generate Invoice</button>
+  </form>
+
+  <!-- Invoice preview + send to bank -->
+  <div class="card" id="preview-card">
+    <div class="card-head">
+      <h2>Invoice preview</h2>
+      <button class="btn btn-outline btn-sm hidden" id="pdf-btn">Download as PDF</button>
+    </div>
+    <div id="preview-empty" class="empty">Fill in the form and click <strong>Generate Invoice</strong>, or open a past invoice below.</div>
+    <div id="invoice-print-area"></div>
+    <div id="send-box" class="hidden" style="margin-top: 16px">
+      <label for="send-bank">Send to bank for financing</label>
+      <div class="row">
+        <select id="send-bank" style="flex: 1; min-width: 180px"></select>
+        <button class="btn btn-accent" id="send-btn">Send to Bank</button>
+      </div>
+      <p class="muted small" style="margin-top: 8px">The bank lends 80% of the invoice total (the "advance").</p>
+    </div>
+  </div>
+</div>
+
+<!-- Past invoices -->
+<section class="card" style="margin-top: 20px">
+  <div class="card-head"><h2>My invoices &amp; financing requests</h2></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Invoice</th><th>Buyer</th><th>Date</th><th class="num">Total</th><th>Requests</th><th></th></tr></thead>
+      <tbody id="past-invoices"></tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/supplier.js') }}"></script>
+{% endblock %}

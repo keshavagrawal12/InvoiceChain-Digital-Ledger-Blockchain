@@ -1,0 +1,40 @@
+{# verify.html - Verify Invoice: anyone can check if an invoice has already been financed. #}
+{% extends "base.html" %}
+{% block title %}Verify Invoice{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Verify an invoice</h1>
+    <p>Check whether an invoice has already been financed, and by which bank. Just enter its invoice number.</p>
+  </div>
+</div>
+
+<div class="grid grid-2" style="align-items: start">
+  <div class="card">
+    <div class="tabs" style="margin-bottom: 16px">
+      <button class="active" data-mode="details">By invoice number</button>
+      <button data-mode="fingerprint">By fingerprint</button>
+    </div>
+
+    <form id="details-form" autocomplete="off">
+      <div class="field"><label for="v-number">Invoice number</label><input id="v-number" placeholder="e.g. INV-2026-0001" required></div>
+      <button class="btn btn-accent" type="submit">Check blockchain</button>
+      <p class="muted small" style="margin: 12px 0 0">The blockchain only stores fingerprints, not invoice numbers. So the app finds the invoice by its number, takes its fingerprint, and searches the chain for it.</p>
+    </form>
+
+    <form id="fingerprint-form" class="hidden" autocomplete="off">
+      <div class="field"><label for="v-fingerprint">Invoice fingerprint (64 hex characters)</label><input id="v-fingerprint" class="mono" required></div>
+      <button class="btn btn-accent" type="submit">Check blockchain</button>
+    </form>
+  </div>
+
+  <div id="verify-result">
+    <div class="card"><p class="empty" style="margin: 0">The result will appear here.</p></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/verify.js') }}"></script>
+{% endblock %}
